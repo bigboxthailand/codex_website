@@ -1,28 +1,14 @@
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
+const path = require('path');
 const app = express();
 
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/cryptoclock');
+// Serve static files (ต้องใช้ path.join(__dirname, '../frontend'))
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-const productSchema = new mongoose.Schema({
-    name: String,
-    price: Number,
-    description: String
-});
-
-const Product = mongoose.model('Product', productSchema);
-
-app.get('/api/products', async (req, res) => {
-    const products = await Product.find();
-    res.json(products);
-});
-
-app.post('/api/orders', async (req, res) => {
-    // placeholder for order logic
-    res.json({ message: 'order received' });
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
 const PORT = process.env.PORT || 3001;
